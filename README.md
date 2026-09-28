@@ -13,6 +13,10 @@
 
 ---
 
+## 📲 下载安卓版
+
+去 [**Releases**](https://github.com/kangjiacheng1/moyu-calculator/releases) 页面下载 `moyu-calculator.apk`，传到手机后允许「安装未知来源应用」即可安装。
+
 ## 📱 主界面
 
 「🌅 开始上班」打卡 → 「🧱 搬砖 / 🐟 摸鱼」随意切换 → 「🏃 下班跑路」收工。大号实时计时，「今日记录」逐段记下每一次切换；浅色深色双主题， Material You 风格。

@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "app.vercel.moyu_calculator_green.twa",
+        "sha256_cert_fingerprints": ["70:C2:D0:1D:77:D8:C8:C7:6A:1A:AE:43:F2:D8:D8:A3:AC:A9:C0:F3:D8:2B:42:6D:E2:DA:1B:57:4D:2D:6F:BC"]
+      }
+    }]
