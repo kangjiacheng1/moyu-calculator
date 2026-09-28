@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">摸鱼计算器</string>
+    <string name="title_activity_main">摸鱼计算器</string>
+    <string name="package_name">com.kangjiacheng.moyu</string>
+    <string name="custom_url_scheme">com.kangjiacheng.moyu</string>
+</resources>
