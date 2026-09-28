@@ -6,7 +6,6 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "icons": "node scripts/gen-icons.mjs",
     "lint": "oxlint",
     "preview": "vite preview"
   },
