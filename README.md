@@ -7,84 +7,66 @@
 <p align="center">算算你今天白嫖了老板多少钱 🐟</p>
 
 <p align="center">
-  Vite + React 构建的移动端 PWA，可一键打包成安卓 APK<br/>
-  数据全部存在本地，老板和网络运营商都看不到
+  一款移动端摸鱼记账 PWA：打卡计时、迟到早退自动判定、按你的真实薪资把每一分钟摸鱼折算成钱<br/>
+  数据全部存在手机本地，老板和网络运营商都看不到
 </p>
 
 ---
 
-## 📱 长什么样
+## 📱 主界面
+
+「🌅 开始上班」打卡 → 「🧱 搬砖 / 🐟 摸鱼」随意切换 → 「🏃 下班跑路」收工。大号实时计时，「今日记录」逐段记下每一次切换；浅色深色双主题， Material You 风格。
 
 <p align="center">
-  <img src="docs/screenshots/main-light.png" width="220" alt="主操作页（浅色）" />
-  <img src="docs/screenshots/main-dark.png" width="220" alt="主操作页（深色）" />
-  <img src="docs/screenshots/daily-report.png" width="220" alt="日报" />
-  <img src="docs/screenshots/week-report.png" width="220" alt="周报" />
+  <img src="docs/screenshots/main-light.png" width="230" alt="主操作页（浅色）" />
+  <img src="docs/screenshots/main-dark.png" width="230" alt="主操作页（深色）" />
 </p>
 
-## ✨ 功能一览
+## 📊 报表
 
-**⏱️ 打卡计时**
-- 「🌅 开始上班」打卡 → 「🧱 搬砖 / 🐟 摸鱼」随意切换 → 「🏃 下班跑路」收工
-- 大号实时计时，「今日记录」逐段列出每一次切换，账记得清清楚楚
-- 忘记按下班？当天 24:00 自动按下班时间结算
+主页横向滑动三页：日报 | 主操作 | 周报。
 
-**🧮 时间逻辑**
-- 上午 / 下午两段作息可配置（默认 09:00–12:00、13:30–18:00），午休自动剔除
-- 迟到（宽限期可改）、早退、加班自动判定，**迟到早退统统计入摸鱼**
-- 非工作时段计时照走，但会明确提示「不计入统计」
-
-**💰 薪资换算**
-- 填上月薪和年终奖，自动算出日薪和「每分钟价值」
-- 摸鱼、迟到、早退、加班全部折算成金额，日报大字展示**今日总白嫖金额**
-
-**📅 工作制度 & 节假日**
-- 双休 / 大小周（指定基准周六，隔周循环）/ 单休
-- 节假日三层判定：timor.tech API（本地缓存）→ 内置 2026 年完整官方放假调休表 → 手动逐日覆盖
-- 休息日自动不记账，显示「今天放假，摸鱼自由 🎉」
-
-**📊 报表与段位**
-- 主页横向滑动三页：日报 | 主操作 | 周报，月报独立成页
-- 周报：每日摸鱼柱状图 + 与上周对比；月报：搬砖 vs 摸鱼环形图 + 摸鱼最多的星期几
-- 快乐换算：本月摸鱼 ≈ X 杯奶茶（1 杯 = 15 元）
+- **日报**：今日搬砖 / 摸鱼 / 迟到 / 早退 / 加班的时长与金额，大字展示**今日总白嫖金额**和当日摸鱼段位
+- **周报**：本周每天摸鱼时长柱状图（休息日斜纹、法定节假日自动识别），与上周对比箭头
+- **月报**（独立页）：搬砖 vs 摸鱼环形图、累计摸鱼金额、快乐换算「本月摸鱼 ≈ X 杯奶茶」、摸鱼最多的星期几、月度段位
 - 五档摸鱼段位：🥉 青铜鱼 → 🥈 白银鱼 → 🍟 老油条 → 🐋 深海巨鲸 → 🏠 公司是我家
 
-**💾 数据**
-- 全部存 localStorage，刷新、杀后台、关屏重开都不丢
-- 设置即改即存，支持导出 / 导入 JSON 备份迁移
+<p align="center">
+  <img src="docs/screenshots/daily-report.png" width="230" alt="日报" />
+  <img src="docs/screenshots/week-report.png" width="230" alt="周报" />
+</p>
 
-**🎨 外观**
-- Material Design 3 (Material You) 风格：大圆角卡片、低饱和配色、深浅双主题
-- 适配手机竖屏，刘海屏 / 底部手势条安全区全处理
+## ⚙️ 设置（一切皆可定制，即改即存）
 
-## 🚀 快速开始
+**💰 薪资**：填月薪和年终奖，实时算出「日薪」和「每分钟价值」——你摸的每一分钟鱼都有明码标价。
+**⏰ 作息**：上午 / 下午上下班时间四段可配（午休自动剔除，不计工时也不算摸鱼），迟到宽限期可改。
 
-```bash
-npm install
-npm run dev        # 开发预览 http://localhost:5173
-```
+<p align="center">
+  <img src="docs/screenshots/settings-salary.png" width="260" alt="设置：薪资与作息" />
+</p>
 
-```bash
-npm run build      # 构建到 dist/
-npm run preview    # 生产预览 http://localhost:4173
-```
+**📅 工作制度**：双休 / 大小周 / 单休；大小周指定一个「要上班的基准周六」，之后隔周自动循环。
+**🎨 外观**：跟随系统 / 浅色 / 深色。
 
-手机真机预览：`npm run dev -- --host`，手机连同一 Wi-Fi 访问电脑 IP 即可。
+<p align="center">
+  <img src="docs/screenshots/settings-scheme.png" width="260" alt="设置：工作制度、外观与节假日" />
+</p>
 
-## 📦 打包成安卓 APK
+**🏖️ 节假日**：自动查询当年放假调休安排并缓存本地，断网时用内置的 2026 年官方数据兜底。
+**🗓️ 日历覆盖**：哪天公司临时要求加班、哪天偷偷调休，点按即可逐日切换「自动 → 强制上班 → 强制休息」，优先级高于一切自动判定。法定节假日、调休上班日在日历里一目了然（图中 9/20 就是调休上班日）。
+**💾 数据**：一键导出 JSON 备份，换手机导入即恢复；本地存储，刷新、杀后台、关屏重开数据都不丢。
 
-项目已内置完整 PWA 配置（manifest、图标、service worker 离线缓存）：
+<p align="center">
+  <img src="docs/screenshots/settings-calendar.png" width="260" alt="设置：日历覆盖与数据备份" />
+</p>
 
-1. `npm run build`，把 `dist/` 部署到任意 HTTPS 托管（Netlify / Vercel / GitHub Pages）
-2. 打开 [PWABuilder](https://www.pwabuilder.com)，输入部署地址，检测全绿
-3. Package For Android → 下载 APK，传到手机安装即可
+## 🐟 一些贴心的细节
 
-## 🛠 技术栈
-
-- **Vite + React 19**，无 UI 框架，Material You 风格手写 CSS（浅色 / 深色双套 token）
-- **vite-plugin-pwa**：service worker 离线缓存，可安装到主屏幕
-- **零后端**：localStorage 持久化，纯函数时间/薪资/段位计算逻辑（`src/lib/`）
-- 节假日数据：[timor.tech API](https://timor.tech/api/holiday) + 内置 2026 年兜底表
+- 迟到、早退的时间**自动计入摸鱼**，累计摸鱼下方会标明「含迟到 X 分钟」
+- 非工作时段（上班前 / 午休 / 下班后）计时照走，但会明确提示「这段时间不计入统计」
+- 忘记按「下班跑路」？当天 24:00 自动按下班时间结算，一分加班费都不会漏记
+- 休息日整个操作区变成「🎉 今天放假，摸鱼自由」，不记账
+- 退到后台、锁屏、被杀进程再打开，计时从上次状态无缝继续
 
 ## ⚠️ 免责声明
 
