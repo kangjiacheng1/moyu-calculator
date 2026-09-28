@@ -55,22 +55,22 @@ function clampSegmentToWindows(start, end, windows) {
 
 // 计算单日统计。day: DayRecord，nowMs 用于截断进行中的 segment
 export function computeDayStats(day, settings, nowMs = Date.now()) {
-  const stats = { lateMin: 0, earlyMin: 0, overtimeMin: 0, workMin: 0, fishMin: 0 }
+  const stats = { lateMin: 0, earlyMin: 0, overtimeMin: 0, workMin: 0, fishMin: 0, fishTotalMin: 0 }
   if (!day || !Array.isArray(day.segments) || day.segments.length === 0) {
     return stats
   }
   const ds = day.date
   const windows = workWindows(ds, settings)
 
-  let firstWorkStart = null
+  let firstStart = null
   for (const seg of day.segments) {
     const start = seg.start
     const end = seg.end == null ? Math.min(nowMs, minutesOfDay(ds, '24:00')) : seg.end
     if (end <= start) continue
+    if (firstStart == null || start < firstStart) firstStart = start
     const ms = clampSegmentToWindows(start, end, windows)
     if (seg.kind === 'work') {
       stats.workMin += ms / 60000
-      if (firstWorkStart == null || start < firstWorkStart) firstWorkStart = start
     } else if (seg.kind === 'fish') {
       stats.fishMin += ms / 60000
     }
@@ -78,11 +78,11 @@ export function computeDayStats(day, settings, nowMs = Date.now()) {
   stats.workMin = Math.floor(stats.workMin)
   stats.fishMin = Math.floor(stats.fishMin)
 
-  // 迟到：第一个 work segment 的 start 与 amStart + 宽限 比较
-  if (firstWorkStart != null) {
+  // 迟到：当天第一个 segment（无论 work/fish）的 start 与 amStart + 宽限 比较
+  if (firstStart != null) {
     const graceEnd = minutesOfDay(ds, settings.amStart) + (settings.lateGraceMin || 0) * 60000
-    if (firstWorkStart > graceEnd) {
-      stats.lateMin = Math.floor((firstWorkStart - graceEnd) / 60000)
+    if (firstStart > graceEnd) {
+      stats.lateMin = Math.floor((firstStart - graceEnd) / 60000)
     }
   }
 
@@ -95,6 +95,9 @@ export function computeDayStats(day, settings, nowMs = Date.now()) {
       stats.overtimeMin = Math.floor((day.offWorkAt - pmEndMs) / 60000)
     }
   }
+
+  // 迟到/早退计入摸鱼：展示口径统一用 fishTotalMin
+  stats.fishTotalMin = stats.fishMin + stats.lateMin + stats.earlyMin
   return stats
 }
 

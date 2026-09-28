@@ -12,25 +12,25 @@ export default function MonthView({ onBack }) {
   const dates = monthDates(today)
 
   let workMin = 0
-  let fishMin = 0
+  let fishTotalMin = 0
   const byWeekday = [0, 0, 0, 0, 0, 0, 0]
   for (const d of dates) {
     const day = days[d]
     if (!day) continue
     const s = computeDayStats(day, settings, now)
     workMin += s.workMin
-    fishMin += s.fishMin
+    fishTotalMin += s.fishTotalMin
     const dow = new Date(`${d}T00:00:00`).getDay()
-    byWeekday[dow] += s.fishMin
+    byWeekday[dow] += s.fishTotalMin
   }
 
-  const total = workMin + fishMin
-  const fishRatio = total > 0 ? fishMin / total : 0
-  const fishMoney = minutesToMoney(fishMin, settings)
+  const total = workMin + fishTotalMin
+  const fishRatio = total > 0 ? fishTotalMin / total : 0
+  const fishMoney = minutesToMoney(fishTotalMin, settings)
   const milkTea = fishMoney / 15
   const maxWeekday = byWeekday.indexOf(Math.max(...byWeekday))
-  const hasFish = fishMin > 0
-  const rank = getRank(workMin, fishMin)
+  const hasFish = fishTotalMin > 0
+  const rank = getRank(workMin, fishTotalMin)
 
   // 环形图：两段 stroke-dasharray
   const R = 54
@@ -81,7 +81,7 @@ export default function MonthView({ onBack }) {
             </span>
             <span className="legend-item">
               <i className="legend-dot" style={{ background: 'var(--fish)' }} />
-              摸鱼 {formatDuration(fishMin)}
+              摸鱼 {formatDuration(fishTotalMin)}
             </span>
           </div>
         </div>

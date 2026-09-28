@@ -13,7 +13,7 @@ const WEEKDAYS = ['一', '二', '三', '四', '五', '六', '日']
 
 function sumFish(dates, days, settings, now) {
   return dates.reduce(
-    (acc, d) => acc + computeDayStats(days[d], settings, now).fishMin,
+    (acc, d) => acc + computeDayStats(days[d], settings, now).fishTotalMin,
     0,
   )
 }
@@ -23,7 +23,7 @@ export default function WeekPanel() {
   const { settings, days, overrides } = state
   const today = dateStr(new Date(now))
   const week = weekDates(today)
-  const fishList = week.map((d) => computeDayStats(days[d], settings, now).fishMin)
+  const fishList = week.map((d) => computeDayStats(days[d], settings, now).fishTotalMin)
   const maxFish = Math.max(...fishList, 1)
   const weekTotal = fishList.reduce((a, b) => a + b, 0)
   const lastTotal = sumFish(prevWeekDates(today), days, settings, now)

@@ -8,13 +8,16 @@ import {
 } from '../lib/money.js'
 import { getRank } from '../lib/rank.js'
 
-function Row({ label, duration, money, tone }) {
+function Row({ label, duration, money, tone, detail }) {
   return (
     <div className="stat-row">
       <span className="stat-label">{label}</span>
-      <span className="stat-value">
-        <span className="stat-duration">{duration}</span>
-        {money != null && <span className={`stat-money ${tone || ''}`}>{money}</span>}
+      <span className="stat-value stat-value-col">
+        <span className="stat-line">
+          <span className="stat-duration">{duration}</span>
+          {money != null && <span className={`stat-money ${tone || ''}`}>{money}</span>}
+        </span>
+        {detail && <span className="stat-detail">{detail}</span>}
       </span>
     </div>
   )
@@ -28,9 +31,19 @@ export default function TodayPanel() {
   const stats = computeDayStats(day, settings, now)
   const rate = perMinuteRate(settings)
   const leach = totalLeachMoney(stats, settings)
-  const rank = getRank(stats.workMin, stats.fishMin)
+  const rank = getRank(stats.workMin, stats.fishTotalMin)
 
   const signed = (min) => `${min > 0 ? '-' : ''}${formatMoney(Math.abs(minutesToMoney(min, settings)))}`
+
+  const fishDetail =
+    stats.lateMin > 0 || stats.earlyMin > 0
+      ? `含${[
+          stats.lateMin > 0 ? `迟到 ${stats.lateMin} 分钟` : '',
+          stats.earlyMin > 0 ? `早退 ${stats.earlyMin} 分钟` : '',
+        ]
+          .filter(Boolean)
+          .join(' · ')}`
+      : null
 
   return (
     <div className="panel-body">
@@ -43,9 +56,10 @@ export default function TodayPanel() {
         />
         <Row
           label="🐟 摸鱼"
-          duration={formatDuration(stats.fishMin)}
-          money={`+${formatMoney(minutesToMoney(stats.fishMin, settings))}`}
+          duration={formatDuration(stats.fishTotalMin)}
+          money={`+${formatMoney(minutesToMoney(stats.fishTotalMin, settings))}`}
           tone="good"
+          detail={fishDetail}
         />
         <Row
           label="⏰ 迟到"
@@ -79,7 +93,7 @@ export default function TodayPanel() {
           <span className="rank-emoji">{rank.emoji}</span>
           <span className="rank-name">{rank.name}</span>
         </div>
-        {stats.workMin + stats.fishMin > 0 && (
+        {stats.workMin + stats.fishTotalMin > 0 && (
           <div className="leach-formula">
             摸鱼占比 {(rank.ratio * 100).toFixed(1)}%
           </div>

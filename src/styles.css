@@ -141,10 +141,16 @@ input {
   display: flex;
   align-items: center;
   justify-content: center;
+  background: var(--surface-container-high);
+  color: var(--on-surface-variant);
+  transition:
+    transform 0.1s ease,
+    background 0.15s ease;
 }
 
 .icon-btn:active {
-  background: var(--surface-container-high);
+  transform: scale(0.92);
+  background: color-mix(in srgb, var(--on-surface-variant) 18%, var(--surface-container-high));
 }
 
 /* ===== 横向三页滑动 ===== */
@@ -221,20 +227,31 @@ input {
 .status-card {
   text-align: center;
   padding: 28px 20px;
+  transition: background 0.2s ease;
+}
+
+.status-card.status-fish {
+  background: var(--fish-container);
+}
+
+.status-card.status-work {
+  background: var(--work-container);
 }
 
 .status-label {
   font-size: 15px;
   color: var(--on-surface-variant);
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .status-work .status-label {
   color: var(--work);
+  font-weight: 700;
 }
 
 .status-fish .status-label {
   color: var(--fish);
+  font-weight: 700;
 }
 
 .status-clock {
@@ -265,8 +282,29 @@ input {
   margin-top: 6px;
 }
 
+.status-work .status-accum,
+.status-fish .status-accum {
+  color: var(--on-surface);
+  opacity: 0.75;
+}
+
+.status-accum-detail {
+  font-size: 12px;
+  margin-top: 2px;
+}
+
 .dot-sep {
   margin: 0 8px;
+}
+
+.status-hint {
+  display: inline-block;
+  font-size: 13px;
+  color: var(--on-surface-variant);
+  background: var(--surface-container-high);
+  border-radius: 999px;
+  padding: 6px 14px;
+  margin-top: 10px;
 }
 
 .chip-row {
@@ -368,6 +406,70 @@ html[data-theme='dark'] .btn-fish-filled {
   flex: none;
 }
 
+.btn-hero {
+  min-height: 60px;
+  font-size: 17px;
+  margin-bottom: 12px;
+}
+
+.btn-offwork {
+  margin-bottom: 16px;
+}
+
+/* ===== 今日记录（分段列表） ===== */
+
+.record-card {
+  padding-bottom: 12px;
+}
+
+.record-list {
+  max-height: 224px;
+  overflow-y: auto;
+}
+
+.record-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  color: var(--on-surface-variant);
+}
+
+.record-row + .record-row {
+  margin-top: 2px;
+}
+
+.record-kind {
+  flex: none;
+}
+
+.record-time {
+  flex: 1;
+  color: var(--on-surface);
+}
+
+.record-open .record-time {
+  color: var(--primary);
+}
+
+.record-dur {
+  flex: none;
+}
+
+.record-open {
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+  font-weight: 600;
+}
+
+.record-open .record-time {
+  color: var(--on-primary-container);
+  font-weight: 700;
+}
+
 /* ===== 休息日卡片 ===== */
 
 .rest-card {
@@ -438,6 +540,23 @@ html[data-theme='dark'] .btn-fish-filled {
   align-items: baseline;
   gap: 10px;
   font-variant-numeric: tabular-nums;
+}
+
+.stat-value-col {
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.stat-line {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.stat-detail {
+  font-size: 12px;
+  color: var(--on-surface-variant);
 }
 
 .stat-duration {

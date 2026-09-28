@@ -18,9 +18,9 @@ export function minutesToMoney(min, settings) {
   return min * perMinuteRate(settings)
 }
 
-// 总白嫖金额 = (摸鱼 + 迟到 + 早退分钟) × 单价
+// 总白嫖金额 = 摸鱼总计（含迟到、早退）× 单价
 export function totalLeachMoney(stats, settings) {
-  return minutesToMoney(stats.fishMin + stats.lateMin + stats.earlyMin, settings)
+  return minutesToMoney(stats.fishTotalMin, settings)
 }
 
 // 加班价值 = 加班分钟 × 单价（单独展示）

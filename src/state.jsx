@@ -131,9 +131,12 @@ export function MoyuProvider({ children }) {
     return () => window.removeEventListener('moyu-holiday-updated', onUpdated)
   }, [])
 
-  // 挂载时 + 页面回到前台时结算过去未结算的日期
+  // 挂载时 + 页面回到前台时结算过去未结算的日期；回到前台立即刷新计时，不等下一个 tick
   useEffect(() => {
-    const settle = () => dispatch({ type: 'settlePastDays' })
+    const settle = () => {
+      setNow(Date.now())
+      dispatch({ type: 'settlePastDays' })
+    }
     settle()
     const onVisible = () => {
       if (document.visibilityState === 'visible') settle()
