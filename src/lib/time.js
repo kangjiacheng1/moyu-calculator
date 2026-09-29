@@ -78,11 +78,11 @@ export function computeDayStats(day, settings, nowMs = Date.now()) {
   stats.workMin = Math.floor(stats.workMin)
   stats.fishMin = Math.floor(stats.fishMin)
 
-  // 迟到：当天第一个 segment（无论 work/fish）的 start 与 amStart + 宽限 比较
+  // 迟到：当天第一个 segment（无论 work/fish）的 start 晚于 amStart 即算迟到
   if (firstStart != null) {
-    const graceEnd = minutesOfDay(ds, settings.amStart) + (settings.lateGraceMin || 0) * 60000
-    if (firstStart > graceEnd) {
-      stats.lateMin = Math.floor((firstStart - graceEnd) / 60000)
+    const amStartMs = minutesOfDay(ds, settings.amStart)
+    if (firstStart > amStartMs) {
+      stats.lateMin = Math.floor((firstStart - amStartMs) / 60000)
     }
   }
 
@@ -96,8 +96,11 @@ export function computeDayStats(day, settings, nowMs = Date.now()) {
     }
   }
 
-  // 迟到/早退计入摸鱼：展示口径统一用 fishTotalMin
-  stats.fishTotalMin = stats.fishMin + stats.lateMin + stats.earlyMin
+  // 展示口径 fishTotalMin：「算摸鱼」模式 = 摸鱼 + 迟到 + 早退；「扣钱」模式 = 纯摸鱼
+  stats.fishTotalMin =
+    settings.lateEarlyMode === 'deduct'
+      ? stats.fishMin
+      : stats.fishMin + stats.lateMin + stats.earlyMin
   return stats
 }
 

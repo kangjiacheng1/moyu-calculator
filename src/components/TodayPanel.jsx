@@ -38,8 +38,10 @@ export default function TodayPanel() {
 
   const signed = (min) => `${min > 0 ? '-' : ''}${formatMoney(Math.abs(minutesToMoney(min, settings)))}`
 
+  const inFishMode = settings.lateEarlyMode !== 'deduct'
+
   const fishDetail =
-    stats.lateMin > 0 || stats.earlyMin > 0
+    inFishMode && (stats.lateMin > 0 || stats.earlyMin > 0)
       ? `含${[
           stats.lateMin > 0 ? `迟到 ${stats.lateMin} 分钟` : '',
           stats.earlyMin > 0 ? `早退 ${stats.earlyMin} 分钟` : '',
@@ -67,14 +69,16 @@ export default function TodayPanel() {
         <Row
           label="⏰ 迟到"
           duration={stats.lateMin > 0 ? `${stats.lateMin}分钟` : '0分钟'}
-          money={stats.lateMin > 0 ? signed(stats.lateMin) : null}
+          money={!inFishMode && stats.lateMin > 0 ? signed(stats.lateMin) : null}
           tone="bad"
+          detail={inFishMode && stats.lateMin > 0 ? '已计入摸鱼' : null}
         />
         <Row
           label="🏃 早退"
           duration={stats.earlyMin > 0 ? `${stats.earlyMin}分钟` : '0分钟'}
-          money={stats.earlyMin > 0 ? signed(stats.earlyMin) : null}
+          money={!inFishMode && stats.earlyMin > 0 ? signed(stats.earlyMin) : null}
           tone="bad"
+          detail={inFishMode && stats.earlyMin > 0 ? '已计入摸鱼' : null}
         />
         <Row
           label="🌙 加班"
@@ -87,7 +91,9 @@ export default function TodayPanel() {
       <div className="card leach-card">
         <div className="leach-label">总白嫖金额</div>
         <div className="leach-amount">{formatMoney(leach)}</div>
-        <div className="leach-formula">摸鱼 + 迟到 + 早退，每分钟 {formatMoney(rate, 3)}</div>
+        <div className="leach-formula">
+          {inFishMode ? '摸鱼 + 迟到 + 早退' : '摸鱼'}，每分钟 {formatMoney(rate, 3)}
+        </div>
       </div>
 
       <div className="card rank-card">

@@ -18,7 +18,7 @@ export const DEFAULT_SETTINGS = {
   amEnd: '12:00',
   pmStart: '13:30',
   pmEnd: '18:00',
-  lateGraceMin: 10,
+  lateEarlyMode: 'fish', // 'fish' 迟到早退算摸鱼 | 'deduct' 扣钱
   weekScheme: 'double', // 'double' 双休 | 'bigsmall' 大小周 | 'single' 单休
   baseSaturday: '2026-01-03', // 大小周基准：该周六上班
   theme: 'system', // 'system' | 'light' | 'dark'

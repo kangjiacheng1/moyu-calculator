@@ -80,9 +80,10 @@ export default function MainPanel() {
     }
   }
 
-  // 迟到/早退计入摸鱼的明细说明
+  // 「算进摸鱼」模式下迟到/早退计入摸鱼，明细小字提示；「扣钱」模式另行显示为损失
+  const inFishMode = settings.lateEarlyMode !== 'deduct'
   const fishDetail =
-    stats.lateMin > 0 || stats.earlyMin > 0
+    inFishMode && (stats.lateMin > 0 || stats.earlyMin > 0)
       ? `含${[
           stats.lateMin > 0 ? `迟到 ${stats.lateMin} 分钟` : '',
           stats.earlyMin > 0 ? `早退 ${stats.earlyMin} 分钟` : '',
@@ -198,13 +199,15 @@ export default function MainPanel() {
         {open && !inLunch && offWindowHint && <div className="status-hint">{offWindowHint}</div>}
         <div className="chip-row">
           {stats.lateMin > 0 && (
-            <span className="chip chip-bad">
-              迟到 {stats.lateMin} 分钟 · -{formatMoney(stats.lateMin * rate)}
+            <span className={`chip ${inFishMode ? '' : 'chip-bad'}`}>
+              迟到 {stats.lateMin} 分钟
+              {inFishMode ? ' · 已计入摸鱼' : ` · -${formatMoney(stats.lateMin * rate)}`}
             </span>
           )}
           {stats.earlyMin > 0 && (
-            <span className="chip chip-bad">
-              早退 {stats.earlyMin} 分钟 · -{formatMoney(stats.earlyMin * rate)}
+            <span className={`chip ${inFishMode ? '' : 'chip-bad'}`}>
+              早退 {stats.earlyMin} 分钟
+              {inFishMode ? ' · 已计入摸鱼' : ` · -${formatMoney(stats.earlyMin * rate)}`}
             </span>
           )}
           {stats.overtimeMin > 0 && (

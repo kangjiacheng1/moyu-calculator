@@ -8,7 +8,7 @@ import { exportAll } from '../lib/storage.js'
 import { listModels } from '../lib/ai.js'
 import { notifySupported, requestNotifyPermission } from '../lib/notify.js'
 import { Capacitor } from '@capacitor/core'
-import { Filesystem, Directory } from '@capacitor/filesystem'
+import { Filesystem, Directory, Encoding } from '@capacitor/filesystem'
 import { Share } from '@capacitor/share'
 
 const WEEKDAYS = ['一', '二', '三', '四', '五', '六', '日']
@@ -180,6 +180,7 @@ export default function SettingsView({ onBack }) {
           path: fileName,
           data,
           directory: Directory.Cache,
+          encoding: Encoding.UTF8,
         })
         await Share.share({ title: '摸鱼计算器备份', url: result.uri })
         setExportMsg('已生成备份文件，请在分享面板中保存')
@@ -289,16 +290,20 @@ export default function SettingsView({ onBack }) {
               <input type="time" value={settings.pmEnd} onChange={(e) => update({ pmEnd: e.target.value })} />
             </label>
           </div>
-          <label className="field">
-            <span className="field-label">迟到宽限期（分钟）</span>
-            <input
-              type="number"
-              inputMode="numeric"
-              min="0"
-              value={settings.lateGraceMin}
-              onChange={(e) => update({ lateGraceMin: num(e.target.value) })}
+          <div className="field">
+            <span className="field-label">迟到 / 早退</span>
+            <Segmented
+              options={[
+                { value: 'fish', label: '算进摸鱼' },
+                { value: 'deduct', label: '扣钱' },
+              ]}
+              value={settings.lateEarlyMode}
+              onChange={(v) => update({ lateEarlyMode: v })}
             />
-          </label>
+            <div className="form-msg">
+              算进摸鱼 = 迟到早退的时间按摸鱼计价进账；扣钱 = 显示为当日损失
+            </div>
+          </div>
         </div>
 
         <div className="card">
