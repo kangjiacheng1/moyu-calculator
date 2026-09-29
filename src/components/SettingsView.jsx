@@ -7,6 +7,9 @@ import { lookupHoliday, refreshYearHolidays } from '../lib/holiday.js'
 import { exportAll } from '../lib/storage.js'
 import { listModels } from '../lib/ai.js'
 import { notifySupported, requestNotifyPermission } from '../lib/notify.js'
+import { Capacitor } from '@capacitor/core'
+import { Filesystem, Directory } from '@capacitor/filesystem'
+import { Share } from '@capacitor/share'
 
 const WEEKDAYS = ['一', '二', '三', '四', '五', '六', '日']
 
@@ -98,6 +101,7 @@ export default function SettingsView({ onBack }) {
   const fileRef = useRef(null)
   const [holidayMsg, setHolidayMsg] = useState('')
   const [importMsg, setImportMsg] = useState('')
+  const [exportMsg, setExportMsg] = useState('')
   const [aiMsg, setAiMsg] = useState('')
   const [aiModels, setAiModels] = useState(null) // null = 未拉取过
   const [aiTesting, setAiTesting] = useState(false)
@@ -165,14 +169,35 @@ export default function SettingsView({ onBack }) {
     setHolidayMsg(ok ? '已更新节假日数据' : '获取失败，已使用内置兜底数据')
   }
 
-  const doExport = () => {
+  // 导出：网页端走浏览器下载；安卓 WebView 不支持 <a download>，
+  // 改为写入缓存目录后调起系统分享（可保存到文件/发送到微信等）
+  const doExport = async () => {
     const data = JSON.stringify(exportAll(), null, 2)
+    const fileName = `moyu-backup-${today.replaceAll('-', '')}.json`
+    if (Capacitor.isNativePlatform()) {
+      try {
+        const result = await Filesystem.writeFile({
+          path: fileName,
+          data,
+          directory: Directory.Cache,
+        })
+        await Share.share({ title: '摸鱼计算器备份', url: result.uri })
+        setExportMsg('已生成备份文件，请在分享面板中保存')
+      } catch (e) {
+        // 用户取消分享不算失败
+        if (e?.message && !/cancel/i.test(e.message)) {
+          setExportMsg(`导出失败：${e.message}`)
+        }
+      }
+      return
+    }
     const blob = new Blob([data], { type: 'application/json' })
     const a = document.createElement('a')
     a.href = URL.createObjectURL(blob)
-    a.download = `moyu-backup-${today.replaceAll('-', '')}.json`
+    a.download = fileName
     a.click()
     URL.revokeObjectURL(a.href)
+    setExportMsg('已开始下载备份文件')
   }
 
   const doImport = (e) => {
@@ -409,6 +434,7 @@ export default function SettingsView({ onBack }) {
             onChange={doImport}
           />
           {importMsg && <div className="form-msg">{importMsg}</div>}
+          {exportMsg && <div className="form-msg">{exportMsg}</div>}
           <button className="btn btn-danger btn-wide" style={{ marginTop: 12 }} onClick={resetToday}>
             🗑️ 重置今日记录
           </button>
