@@ -24,11 +24,17 @@ html[data-theme='light'] {
   --good: #386a20;
   --good-container: #d3e8c8;
 
-  --rank-bronze: #c9a179;
-  --rank-silver: #b8c0c8;
-  --rank-gold: #f0c169;
-  --rank-whale: #8fb8d9;
-  --rank-home: #d9a7b8;
+  --rank-grinder: #d7c8f0;
+  --rank-1: #cde8c5;
+  --rank-2: #c9a179;
+  --rank-3: #b8c0c8;
+  --rank-4: #f0c169;
+  --rank-5: #8fc9c9;
+  --rank-6: #8fb8d9;
+  --rank-7: #c3a6d9;
+  --rank-8: #7fb0e0;
+  --rank-9: #d9a7b8;
+  --rank-10: #f5c842;
   --rank-tbd: #ddd5e0;
 }
 
@@ -56,11 +62,17 @@ html[data-theme='dark'] {
   --good: #9ed48a;
   --good-container: #235017;
 
-  --rank-bronze: #8a6a4a;
-  --rank-silver: #7d858d;
-  --rank-gold: #a8843c;
-  --rank-whale: #4d7296;
-  --rank-home: #96687c;
+  --rank-grinder: #5a4a7a;
+  --rank-1: #4a6b46;
+  --rank-2: #8a6a4a;
+  --rank-3: #7d858d;
+  --rank-4: #a8843c;
+  --rank-5: #3d6b6b;
+  --rank-6: #4d7296;
+  --rank-7: #6b5285;
+  --rank-8: #3d5a80;
+  --rank-9: #96687c;
+  --rank-10: #8a6d1f;
   --rank-tbd: #57505e;
 }
 
@@ -1260,4 +1272,131 @@ html[data-theme='dark'] .rank-mini {
 
 .md-switch:disabled {
   opacity: 0.4;
+}
+
+/* ===== 段位图鉴底部弹层 ===== */
+
+.guide-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 100;
+}
+
+.guide-sheet {
+  width: 100%;
+  max-width: 480px;
+  max-height: 82vh;
+  overflow-y: auto;
+  background: var(--surface);
+  border-radius: 28px 28px 0 0;
+  padding: 12px 20px calc(20px + env(safe-area-inset-bottom));
+}
+
+.guide-grip {
+  width: 36px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--outline);
+  opacity: 0.4;
+  margin: 0 auto 12px;
+}
+
+.guide-title {
+  font-size: 19px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.guide-sub {
+  font-size: 12px;
+  color: var(--on-surface-variant);
+  text-align: center;
+  margin: 4px 0 14px;
+}
+
+.guide-row {
+  display: flex;
+  gap: 12px;
+  padding: 10px;
+  border-radius: 20px;
+  align-items: flex-start;
+}
+
+.guide-row-current {
+  background: var(--surface-container);
+  outline: 2px solid var(--primary);
+}
+
+.guide-emoji {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+.guide-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.guide-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.guide-name {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.guide-range {
+  font-size: 12px;
+  color: var(--on-surface-variant);
+}
+
+.guide-now {
+  font-size: 11px;
+  color: var(--on-primary);
+  background: var(--primary);
+  border-radius: 999px;
+  padding: 2px 8px;
+}
+
+.guide-desc {
+  font-size: 13px;
+  color: var(--on-surface-variant);
+  line-height: 1.55;
+  margin-top: 3px;
+}
+
+.guide-divider {
+  text-align: center;
+  font-size: 12px;
+  color: var(--on-surface-variant);
+  margin: 10px 0 4px;
+}
+
+.rank-badge-btn {
+  border: none;
+  cursor: pointer;
+  font: inherit;
+}
+
+.rank-guide-link {
+  display: inline-block;
+  border: none;
+  background: none;
+  font-size: 13px;
+  color: var(--primary);
+  cursor: pointer;
+  padding: 4px 8px;
 }

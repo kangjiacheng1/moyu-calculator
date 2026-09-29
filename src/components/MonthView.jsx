@@ -3,6 +3,7 @@ import { useMoyu } from '../state.jsx'
 import { dateStr, formatDuration, computeDayStats, monthDates, yearMonths } from '../lib/time.js'
 import { minutesToMoney, formatMoney } from '../lib/money.js'
 import { getRank } from '../lib/rank.js'
+import RankGuide from './RankGuide.jsx'
 
 const WEEKDAY_NAMES = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
 
@@ -32,6 +33,7 @@ export default function MonthView({ onBack }) {
 
   const [year, setYear] = useState(curYear)
   const [selMonth, setSelMonth] = useState(null) // null = 年度视图，'YYYY-MM' = 月度详情
+  const [showGuide, setShowGuide] = useState(false)
 
   // ============ 月度详情 ============
   if (selMonth) {
@@ -132,11 +134,21 @@ export default function MonthView({ onBack }) {
 
           <div className="card rank-card">
             <div className="leach-label">本月段位</div>
-            <div className="rank-badge" style={{ background: rank.color }}>
+            <button
+              className="rank-badge rank-badge-btn"
+              style={{ background: rank.color }}
+              onClick={() => setShowGuide(true)}
+            >
               <span className="rank-emoji">{rank.emoji}</span>
               <span className="rank-name">{rank.name}</span>
-            </div>
+            </button>
+            <button className="rank-guide-link" onClick={() => setShowGuide(true)}>
+              段位图鉴 ›
+            </button>
           </div>
+          {showGuide && (
+            <RankGuide currentName={rank.name} onClose={() => setShowGuide(false)} />
+          )}
 
           <div className="card">
             <div className="card-title">每日明细</div>

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useMoyu } from '../state.jsx'
 import { dateStr, formatDuration, computeDayStats } from '../lib/time.js'
 import {
@@ -7,6 +8,7 @@ import {
   formatMoney,
 } from '../lib/money.js'
 import { getRank } from '../lib/rank.js'
+import RankGuide from './RankGuide.jsx'
 
 function Row({ label, duration, money, tone, detail }) {
   return (
@@ -26,6 +28,7 @@ function Row({ label, duration, money, tone, detail }) {
 export default function TodayPanel() {
   const { state, now } = useMoyu()
   const { settings, days } = state
+  const [showGuide, setShowGuide] = useState(false)
   const ds = dateStr(new Date(now))
   const day = days[ds]
   const stats = computeDayStats(day, settings, now)
@@ -89,16 +92,26 @@ export default function TodayPanel() {
 
       <div className="card rank-card">
         <div className="leach-label">今日摸鱼段位</div>
-        <div className="rank-badge" style={{ background: rank.color }}>
+        <button
+          className="rank-badge rank-badge-btn"
+          style={{ background: rank.color }}
+          onClick={() => setShowGuide(true)}
+        >
           <span className="rank-emoji">{rank.emoji}</span>
           <span className="rank-name">{rank.name}</span>
-        </div>
+        </button>
         {stats.workMin + stats.fishTotalMin > 0 && (
           <div className="leach-formula">
             摸鱼占比 {(rank.ratio * 100).toFixed(1)}%
           </div>
         )}
+        <button className="rank-guide-link" onClick={() => setShowGuide(true)}>
+          段位图鉴 ›
+        </button>
       </div>
+      {showGuide && (
+        <RankGuide currentName={rank.name} onClose={() => setShowGuide(false)} />
+      )}
     </div>
   )
 }
