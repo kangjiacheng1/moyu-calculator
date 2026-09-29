@@ -15,7 +15,7 @@
 
 ## 📲 下载安卓版
 
-去 [**Releases**](https://github.com/kangjiacheng1/moyu-calculator/releases) 页面下载 `moyu-calculator.apk`，传到手机后允许「安装未知来源应用」即可安装。
+去 [**Releases**](https://github.com/kangjiacheng1/moyu-calculator/releases/latest) 页面下载 `moyu-calculator-offline.apk`，传到手机后允许「安装未知来源应用」即可安装。完全离线运行，不需要联网。
 
 ## 📱 主界面
 
