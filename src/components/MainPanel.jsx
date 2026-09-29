@@ -27,8 +27,6 @@ export default function MainPanel() {
   const stats = computeDayStats(day, settings, now)
   const rate = perMinuteRate(settings)
 
-  // 日报生成：勾选的原始 segment index
-  const [checkedSegs, setCheckedSegs] = useState(() => new Set())
   // 备注行内编辑：正在编辑的 segment index
   const [editingNote, setEditingNote] = useState(null)
   const [noteDraft, setNoteDraft] = useState('')
@@ -100,16 +98,6 @@ export default function MainPanel() {
     if (r.segIndex != null) lastRowOfSeg.set(r.segIndex, i)
   })
 
-  const toggleCheck = (segIndex) => {
-    setCheckedSegs((prev) => {
-      const next = new Set(prev)
-      if (next.has(segIndex)) next.delete(segIndex)
-      else next.add(segIndex)
-      return next
-    })
-    setReport(null)
-  }
-
   const startEditNote = (segIndex) => {
     setEditingNote(segIndex)
     setNoteDraft(day.segments[segIndex]?.note || '')
@@ -127,7 +115,12 @@ export default function MainPanel() {
       setReport({ status: 'error', text: '请先在设置 → AI 助手中填写 API Key' })
       return
     }
-    const segs = day.segments.filter((s, i) => s.kind === 'work' && checkedSegs.has(i))
+    // 默认汇总全部搬砖段（含备注）
+    const segs = day.segments.filter((s) => s.kind === 'work')
+    if (segs.length === 0) {
+      setReport({ status: 'error', text: '今天还没有搬砖记录，先搬一段再来' })
+      return
+    }
     const records = segs
       .map((s) => {
         const dur = formatDuration(((s.end == null ? now : s.end) - s.start) / 60000)
@@ -276,7 +269,6 @@ export default function MainPanel() {
                 return (
                   <div key={`lunch-${i}`} className="record-item">
                     <div className="record-row record-lunch">
-                      <span className="record-check-space" />
                       <span className="record-kind">☕</span>
                       <span className="record-time">
                         午休 {formatHM(row.start)}–{formatHM(row.end)}
@@ -293,21 +285,9 @@ export default function MainPanel() {
               const isWork = row.kind === 'work'
               const isLastOfSeg = lastRowOfSeg.get(row.segIndex) === i
               const note = isWork ? day.segments[row.segIndex]?.note : null
-              const isChecked = isWork && checkedSegs.has(row.segIndex)
               return (
                 <div key={i} className="record-item">
                   <div className={`record-row ${isOpen ? 'record-open' : ''}`}>
-                    {isWork ? (
-                      <button
-                        className={`record-check ${isChecked ? 'record-checked' : ''}`}
-                        onClick={() => toggleCheck(row.segIndex)}
-                        aria-label="选入日报"
-                      >
-                        {isChecked ? '✓' : ''}
-                      </button>
-                    ) : (
-                      <span className="record-check-space" />
-                    )}
                     <span className="record-kind">{isWork ? '🧱' : '🐟'}</span>
                     <span className="record-time">
                       {formatHM(row.start)}–{isOpen ? '现在' : formatHM(row.end)}
@@ -347,9 +327,9 @@ export default function MainPanel() {
         </div>
       )}
 
-      {checkedSegs.size > 0 && (
+      {hasStarted && (
         <button className="btn btn-filled btn-wide btn-offwork" onClick={generateReport}>
-          📝 生成日报（已选 {checkedSegs.size} 段）
+          📝 生成日报
         </button>
       )}
 

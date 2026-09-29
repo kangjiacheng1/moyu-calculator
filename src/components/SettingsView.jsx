@@ -235,6 +235,38 @@ export default function SettingsView({ onBack }) {
       </div>
       <div className="panel-body view-body">
         <div className="card">
+          <div className="card-title">🎨 外观</div>
+          <Segmented
+            options={[
+              { value: 'system', label: '跟随系统' },
+              { value: 'light', label: '浅色' },
+              { value: 'dark', label: '深色' },
+            ]}
+            value={settings.theme}
+            onChange={(v) => update({ theme: v })}
+          />
+        </div>
+
+        <div className="card">
+          <div className="card-title">🔔 通知栏日报</div>
+          <div className="stat-row">
+            <span className="stat-label">常驻通知显示今日统计</span>
+            <button
+              className={`md-switch ${settings.notifyEnabled ? 'md-switch-on' : ''}`}
+              onClick={toggleNotify}
+              disabled={!notifySupported()}
+              aria-pressed={settings.notifyEnabled}
+              aria-label="通知栏日报开关"
+            >
+              <span className="md-switch-thumb" />
+            </button>
+          </div>
+          {!notifySupported() && <div className="form-msg">仅安卓离线版可用</div>}
+          {notifyMsg && <div className="form-msg">{notifyMsg}</div>}
+          <div className="form-msg">App 被系统杀死后通知停止更新，重新打开即恢复</div>
+        </div>
+
+        <div className="card">
           <div className="card-title">💰 薪资</div>
           <label className="field">
             <span className="field-label">月薪（元）</span>
@@ -330,19 +362,6 @@ export default function SettingsView({ onBack }) {
         </div>
 
         <div className="card">
-          <div className="card-title">🎨 外观</div>
-          <Segmented
-            options={[
-              { value: 'system', label: '跟随系统' },
-              { value: 'light', label: '浅色' },
-              { value: 'dark', label: '深色' },
-            ]}
-            value={settings.theme}
-            onChange={(v) => update({ theme: v })}
-          />
-        </div>
-
-        <div className="card">
           <div className="card-title">🏖️ 节假日</div>
           <div className="stat-row">
             <span className="stat-label">今天</span>
@@ -354,6 +373,11 @@ export default function SettingsView({ onBack }) {
             重新获取节假日数据
           </button>
           {holidayMsg && <div className="form-msg">{holidayMsg}</div>}
+        </div>
+
+        <div className="card">
+          <div className="card-title">🗂️ 日历覆盖</div>
+          <CalendarOverride />
         </div>
 
         <div className="card">
@@ -389,7 +413,7 @@ export default function SettingsView({ onBack }) {
             </select>
           </label>
           <label className="field">
-            <span className="field-label">日报提示词模板（{'{records}'} 会被替换为勾选记录）</span>
+            <span className="field-label">日报提示词模板（{'{records}'} 会被替换为今日搬砖记录）</span>
             <textarea
               className="field-textarea"
               rows={6}
@@ -397,30 +421,6 @@ export default function SettingsView({ onBack }) {
               onChange={(e) => update({ aiPromptTemplate: e.target.value })}
             />
           </label>
-        </div>
-
-        <div className="card">
-          <div className="card-title">🔔 通知栏日报</div>
-          <div className="stat-row">
-            <span className="stat-label">常驻通知显示今日统计</span>
-            <button
-              className={`md-switch ${settings.notifyEnabled ? 'md-switch-on' : ''}`}
-              onClick={toggleNotify}
-              disabled={!notifySupported()}
-              aria-pressed={settings.notifyEnabled}
-              aria-label="通知栏日报开关"
-            >
-              <span className="md-switch-thumb" />
-            </button>
-          </div>
-          {!notifySupported() && <div className="form-msg">仅安卓离线版可用</div>}
-          {notifyMsg && <div className="form-msg">{notifyMsg}</div>}
-          <div className="form-msg">App 被系统杀死后通知停止更新，重新打开即恢复</div>
-        </div>
-
-        <div className="card">
-          <div className="card-title">🗂️ 日历覆盖</div>
-          <CalendarOverride />
         </div>
 
         <div className="card">
