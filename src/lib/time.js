@@ -158,3 +158,45 @@ export function monthDates(ds) {
   }
   return out
 }
+
+// 某年 12 个月份 'YYYY-MM' 数组
+export function yearMonths(year) {
+  const out = []
+  for (let m = 1; m <= 12; m++) {
+    out.push(`${year}-${String(m).padStart(2, '0')}`)
+  }
+  return out
+}
+
+// 展示层合成：把段按午休边界 [amEnd, pmStart] 拆分，跨午休时中间插入一条 lunch 段。
+// 不改数据模型；即使 App 午休时没打开，跨越午休的段也能正确显示。
+// 每个输出行带 segIndex 指向原始 segment（备注/勾选用），lunch 行为合成行无 segIndex。
+export function splitSegmentsByLunch(segments, ds, settings, nowMs = Date.now()) {
+  if (!Array.isArray(segments)) return []
+  const lunchStart = minutesOfDay(ds, settings.amEnd)
+  const lunchEnd = minutesOfDay(ds, settings.pmStart)
+  if (lunchEnd <= lunchStart) {
+    return segments.map((s, i) => ({ ...s, segIndex: i }))
+  }
+  const out = []
+  segments.forEach((seg, i) => {
+    const start = seg.start
+    const end = seg.end == null ? nowMs : seg.end
+    // 与午休无交集：原样输出
+    if (end <= lunchStart || start >= lunchEnd) {
+      out.push({ ...seg, segIndex: i })
+      return
+    }
+    // 午休前的部分
+    if (start < lunchStart) {
+      out.push({ kind: seg.kind, start, end: lunchStart, note: seg.note, segIndex: i })
+    }
+    // 合成的午休行
+    out.push({ kind: 'lunch', start: lunchStart, end: lunchEnd })
+    // 午休后的部分（end 可能为 null = 进行中，保留原样）
+    if (end > lunchEnd) {
+      out.push({ kind: seg.kind, start: lunchEnd, end: seg.end, note: seg.note, segIndex: i })
+    }
+  })
+  return out
+}

@@ -1,10 +1,12 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useMoyu } from '../state.jsx'
 import { dateStr } from '../lib/time.js'
 import { perMinuteRate, dailySalary, formatMoney } from '../lib/money.js'
 import { isWorkDay } from '../lib/schedule.js'
 import { lookupHoliday, refreshYearHolidays } from '../lib/holiday.js'
 import { exportAll } from '../lib/storage.js'
+import { listModels } from '../lib/ai.js'
+import { notifySupported, requestNotifyPermission } from '../lib/notify.js'
 
 const WEEKDAYS = ['一', '二', '三', '四', '五', '六', '日']
 
@@ -96,8 +98,57 @@ export default function SettingsView({ onBack }) {
   const fileRef = useRef(null)
   const [holidayMsg, setHolidayMsg] = useState('')
   const [importMsg, setImportMsg] = useState('')
+  const [aiMsg, setAiMsg] = useState('')
+  const [aiModels, setAiModels] = useState(null) // null = 未拉取过
+  const [aiTesting, setAiTesting] = useState(false)
+  const [notifyMsg, setNotifyMsg] = useState('')
 
   const update = (patch) => dispatch({ type: 'updateSettings', patch })
+
+  const testAi = async (silent = false) => {
+    if (!settings.aiApiKey) {
+      if (!silent) setAiMsg('请先填写 API Key')
+      return false
+    }
+    setAiTesting(true)
+    if (!silent) setAiMsg('连接中…')
+    try {
+      const models = await listModels(settings.aiApiKey)
+      setAiModels(models)
+      setAiMsg(`✅ 连接成功，可用 ${models.length} 个模型`)
+      return true
+    } catch (e) {
+      if (!silent) setAiMsg(`❌ ${e.message}`)
+      return false
+    } finally {
+      setAiTesting(false)
+    }
+  }
+
+  // 已有 key 时进入页面自动拉取一次模型列表
+  useEffect(() => {
+    if (settings.aiApiKey) testAi(true)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const toggleNotify = async () => {
+    const next = !settings.notifyEnabled
+    if (next) {
+      const granted = await requestNotifyPermission()
+      if (!granted) {
+        setNotifyMsg('通知权限被拒绝，请在系统设置中允许通知')
+        return
+      }
+    }
+    setNotifyMsg('')
+    update({ notifyEnabled: next })
+  }
+
+  const resetToday = () => {
+    if (window.confirm('确定清空今天的所有记录吗？此操作不可恢复')) {
+      dispatch({ type: 'resetToday' })
+    }
+  }
 
   const today = dateStr(new Date(now))
   const holiday = lookupHoliday(today)
@@ -276,6 +327,68 @@ export default function SettingsView({ onBack }) {
         </div>
 
         <div className="card">
+          <div className="card-title">🤖 AI 助手（DeepSeek）</div>
+          <label className="field">
+            <span className="field-label">API Key（到 platform.deepseek.com 申请）</span>
+            <input
+              type="password"
+              placeholder="sk-…"
+              autoComplete="off"
+              value={settings.aiApiKey}
+              onChange={(e) => update({ aiApiKey: e.target.value.trim() })}
+            />
+          </label>
+          <button className="btn btn-tonal btn-wide" onClick={() => testAi()} disabled={aiTesting}>
+            {aiTesting ? '连接中…' : '测试连接'}
+          </button>
+          {aiMsg && <div className="form-msg">{aiMsg}</div>}
+          <label className="field" style={{ marginTop: 14 }}>
+            <span className="field-label">模型</span>
+            <select
+              className="field-select"
+              value={settings.aiModel}
+              onChange={(e) => update({ aiModel: e.target.value })}
+            >
+              {(aiModels || ['deepseek-chat', 'deepseek-reasoner'])
+                .concat(
+                  aiModels && !aiModels.includes(settings.aiModel) ? [settings.aiModel] : [],
+                )
+                .map((m) => (
+                  <option key={m} value={m}>{m}</option>
+                ))}
+            </select>
+          </label>
+          <label className="field">
+            <span className="field-label">日报提示词模板（{'{records}'} 会被替换为勾选记录）</span>
+            <textarea
+              className="field-textarea"
+              rows={6}
+              value={settings.aiPromptTemplate}
+              onChange={(e) => update({ aiPromptTemplate: e.target.value })}
+            />
+          </label>
+        </div>
+
+        <div className="card">
+          <div className="card-title">🔔 通知栏日报</div>
+          <div className="stat-row">
+            <span className="stat-label">常驻通知显示今日统计</span>
+            <button
+              className={`md-switch ${settings.notifyEnabled ? 'md-switch-on' : ''}`}
+              onClick={toggleNotify}
+              disabled={!notifySupported()}
+              aria-pressed={settings.notifyEnabled}
+              aria-label="通知栏日报开关"
+            >
+              <span className="md-switch-thumb" />
+            </button>
+          </div>
+          {!notifySupported() && <div className="form-msg">仅安卓离线版可用</div>}
+          {notifyMsg && <div className="form-msg">{notifyMsg}</div>}
+          <div className="form-msg">App 被系统杀死后通知停止更新，重新打开即恢复</div>
+        </div>
+
+        <div className="card">
           <div className="card-title">🗂️ 日历覆盖</div>
           <CalendarOverride />
         </div>
@@ -296,6 +409,9 @@ export default function SettingsView({ onBack }) {
             onChange={doImport}
           />
           {importMsg && <div className="form-msg">{importMsg}</div>}
+          <button className="btn btn-danger btn-wide" style={{ marginTop: 12 }} onClick={resetToday}>
+            🗑️ 重置今日记录
+          </button>
         </div>
       </div>
     </>

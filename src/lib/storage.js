@@ -6,6 +6,11 @@ export const KEYS = {
   dayOverrides: 'moyu.dayOverrides.v1',
 }
 
+const DEFAULT_AI_PROMPT = `你是我的工作日报助手。请把下面今天的搬砖记录整理成一份简洁的中文工作日报：分点列出、语气专业积极、每条注明大致耗时，最后加一句今日总结。
+
+今日搬砖记录：
+{records}`
+
 export const DEFAULT_SETTINGS = {
   monthlySalary: 10000,
   yearEndBonus: 0,
@@ -17,6 +22,10 @@ export const DEFAULT_SETTINGS = {
   weekScheme: 'double', // 'double' 双休 | 'bigsmall' 大小周 | 'single' 单休
   baseSaturday: '2026-01-03', // 大小周基准：该周六上班
   theme: 'system', // 'system' | 'light' | 'dark'
+  aiApiKey: '', // DeepSeek API Key
+  aiModel: 'deepseek-chat',
+  aiPromptTemplate: DEFAULT_AI_PROMPT,
+  notifyEnabled: false, // 安卓通知栏日报开关
 }
 
 function readJSON(key, fallback) {

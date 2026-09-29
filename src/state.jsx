@@ -10,6 +10,7 @@ import {
 } from './lib/storage.js'
 import { dateStr, minutesOfDay } from './lib/time.js'
 import { ensureHolidayData } from './lib/holiday.js'
+import { updateNotification } from './lib/notify.js'
 
 const MoyuContext = createContext(null)
 
@@ -106,6 +107,23 @@ function reducer(state, action) {
       if (!ok) return state
       return initState()
     }
+    case 'setSegmentNote': {
+      const { date, index, note } = action
+      const rawDay = state.days[date]
+      if (!rawDay || !rawDay.segments[index]) return state
+      const day = { ...rawDay, segments: rawDay.segments.map((s) => ({ ...s })) }
+      const trimmed = String(note ?? '').trim()
+      if (trimmed) day.segments[index].note = trimmed
+      else delete day.segments[index].note
+      return { ...state, days: { ...state.days, [date]: day } }
+    }
+    case 'resetToday': {
+      const ds = todayStr()
+      if (!state.days[ds]) return state
+      const days = { ...state.days }
+      delete days[ds]
+      return { ...state, days }
+    }
     default:
       return state
   }
@@ -154,6 +172,12 @@ export function MoyuProvider({ children }) {
     const timer = setInterval(() => setNow(Date.now()), 1000)
     return () => clearInterval(timer)
   }, [])
+
+  // 通知栏日报：每到整分钟 + 任何状态变化（开始/切换/下班/改设置）时更新；仅原生环境生效
+  const minute = Math.floor(now / 60000)
+  useEffect(() => {
+    updateNotification(state, now)
+  }, [minute, state]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <MoyuContext.Provider value={{ state, dispatch, now, holidayTick }}>
