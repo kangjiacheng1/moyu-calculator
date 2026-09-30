@@ -666,9 +666,11 @@ html[data-theme='dark'] .rank-badge .rank-name {
   height: 28px;
   display: flex;
   align-items: flex-end;
+  justify-content: center;
   padding-bottom: 4px;
   font-variant-numeric: tabular-nums;
   text-align: center;
+  white-space: nowrap;
   word-break: keep-all;
 }
 
@@ -979,9 +981,11 @@ html[data-theme='dark'] .rank-badge .rank-name {
   height: 26px;
   display: flex;
   align-items: flex-end;
+  justify-content: center;
   padding-bottom: 4px;
   font-variant-numeric: tabular-nums;
   text-align: center;
+  white-space: nowrap;
 }
 
 .year-track {
@@ -1244,7 +1248,7 @@ html[data-theme='dark'] .rank-mini {
 
 .md-switch-thumb {
   position: absolute;
-  left: 4px;
+  left: 6px;
   top: 50%;
   transform: translateY(-50%);
   width: 16px;
@@ -1263,8 +1267,9 @@ html[data-theme='dark'] .rank-mini {
   border-color: var(--primary);
 }
 
+/* 轨道内宽 = 52 - 2×2(边框) = 48；滑块 24px + 两侧各留 2px → left: 22px */
 .md-switch-on .md-switch-thumb {
-  left: 26px;
+  left: 22px;
   width: 24px;
   height: 24px;
   background: var(--on-primary);

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useMoyu } from '../state.jsx'
-import { dateStr, formatDuration, computeDayStats, monthDates, yearMonths } from '../lib/time.js'
+import { dateStr, formatDuration, formatDurationShort, computeDayStats, monthDates, yearMonths } from '../lib/time.js'
 import { minutesToMoney, formatMoney } from '../lib/money.js'
 import { getRank } from '../lib/rank.js'
 import RankGuide from './RankGuide.jsx'
@@ -220,7 +220,7 @@ export default function MonthView({ onBack }) {
                   disabled={isFuture}
                   onClick={() => setSelMonth(mo)}
                 >
-                  <div className="year-value">{fish > 0 ? formatDuration(fish) : ''}</div>
+                  <div className="year-value">{fish > 0 ? formatDurationShort(fish) : ''}</div>
                   <div className="year-track">
                     <div className="year-fill" style={{ height: `${height}%` }} />
                   </div>

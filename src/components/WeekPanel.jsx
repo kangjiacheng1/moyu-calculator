@@ -2,6 +2,7 @@ import { useMoyu } from '../state.jsx'
 import {
   dateStr,
   formatDuration,
+  formatDurationShort,
   computeDayStats,
   weekDates,
   prevWeekDates,
@@ -52,7 +53,7 @@ export default function WeekPanel() {
                 key={d}
                 className={`bar-col ${isToday ? 'bar-today' : ''} ${workday ? '' : 'bar-rest'}`}
               >
-                <div className="bar-value">{fish > 0 ? formatDuration(fish) : ''}</div>
+                <div className="bar-value">{fish > 0 ? formatDurationShort(fish) : ''}</div>
                 <div className="bar-track">
                   <div className="bar-fill" style={{ height: `${height}%` }} />
                 </div>

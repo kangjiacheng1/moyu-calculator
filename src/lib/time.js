@@ -121,6 +121,17 @@ export function formatDuration(min) {
   return `${h}小时${r}分`
 }
 
+// 紧凑时长（图表柱顶标签用）：3小时6分 → '3h6m'，45分钟 → '45m'
+export function formatDurationShort(min) {
+  const m = Math.round(min)
+  if (m <= 0) return '0m'
+  const h = Math.floor(m / 60)
+  const r = m % 60
+  if (h === 0) return `${r}m`
+  if (r === 0) return `${h}h`
+  return `${h}h${r}m`
+}
+
 // 分钟数 → 'HH:MM:SS' 样式的计时器文本（用于大号实时计时）
 export function formatClock(totalSeconds) {
   const s = Math.max(0, Math.floor(totalSeconds))
