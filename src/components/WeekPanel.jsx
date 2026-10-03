@@ -27,6 +27,11 @@ export default function WeekPanel() {
   const fishList = week.map((d) => computeDayStats(days[d], settings, now).fishTotalMin)
   const maxFish = Math.max(...fishList, 1)
   const weekTotal = fishList.reduce((a, b) => a + b, 0)
+  // 周总摸鱼金额：跨月的周按每天各自所在月份的单价分别折算
+  const weekMoney = week.reduce(
+    (acc, d, i) => acc + minutesToMoney(fishList[i], settings, d.slice(0, 7), overrides),
+    0,
+  )
   const lastTotal = sumFish(prevWeekDates(today), days, settings, now)
 
   let compare = null
@@ -70,7 +75,7 @@ export default function WeekPanel() {
           <span className="stat-value">
             <span className="stat-duration">{formatDuration(weekTotal)}</span>
             <span className="stat-money good">
-              +{formatMoney(minutesToMoney(weekTotal, settings))}
+              +{formatMoney(weekMoney)}
             </span>
           </span>
         </div>

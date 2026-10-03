@@ -26,7 +26,7 @@ function sumMonth(days, month, settings, now) {
 
 export default function MonthView({ onBack }) {
   const { state, now } = useMoyu()
-  const { settings, days } = state
+  const { settings, days, overrides } = state
   const today = dateStr(new Date(now))
   const curYear = Number(today.slice(0, 4))
   const curMonth = today.slice(0, 7)
@@ -40,7 +40,7 @@ export default function MonthView({ onBack }) {
     const { workMin, fishTotalMin, byWeekday } = sumMonth(days, selMonth, settings, now)
     const total = workMin + fishTotalMin
     const fishRatio = total > 0 ? fishTotalMin / total : 0
-    const fishMoney = minutesToMoney(fishTotalMin, settings)
+    const fishMoney = minutesToMoney(fishTotalMin, settings, selMonth, overrides)
     const milkTea = fishMoney / 15
     const maxWeekday = byWeekday.indexOf(Math.max(...byWeekday))
     const hasFish = fishTotalMin > 0
@@ -162,7 +162,7 @@ export default function MonthView({ onBack }) {
                 <div className="day-row-stats">
                   <span>🧱 {formatDuration(s.workMin)}</span>
                   <span className="day-row-fish">
-                    🐟 {formatDuration(s.fishTotalMin)} · +{formatMoney(minutesToMoney(s.fishTotalMin, settings))}
+                    🐟 {formatDuration(s.fishTotalMin)} · +{formatMoney(minutesToMoney(s.fishTotalMin, settings, selMonth, overrides))}
                   </span>
                 </div>
                 <span className="rank-mini" style={{ background: r.color }}>

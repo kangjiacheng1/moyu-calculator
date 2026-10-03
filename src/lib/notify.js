@@ -21,11 +21,12 @@ export async function requestNotifyPermission() {
   }
 }
 
-function buildText(day, settings, nowMs) {
+function buildText(day, settings, nowMs, overrides) {
+  const month = dateStr(new Date(nowMs)).slice(0, 7)
   const s = computeDayStats(day, settings, nowMs)
-  const workMoney = minutesToMoney(s.workMin, settings)
-  const fishMoney = minutesToMoney(s.fishTotalMin, settings)
-  const leach = totalLeachMoney(s, settings)
+  const workMoney = minutesToMoney(s.workMin, settings, month, overrides)
+  const fishMoney = minutesToMoney(s.fishTotalMin, settings, month, overrides)
+  const leach = totalLeachMoney(s, settings, month, overrides)
   return `🧱 搬砖 ${formatDuration(s.workMin)} ¥${workMoney.toFixed(0)} · 🐟 摸鱼 ${formatDuration(s.fishTotalMin)} ¥${fishMoney.toFixed(0)} · 总白嫖 ¥${leach.toFixed(0)}`
 }
 
@@ -41,7 +42,7 @@ export async function updateNotification(state, nowMs) {
         {
           id: NOTIFY_ID,
           title: '摸鱼计算器',
-          body: buildText(state.days[ds], state.settings, nowMs),
+          body: buildText(state.days[ds], state.settings, nowMs, state.overrides),
           ongoing: true, // 常驻、不可滑走
           autoCancel: false,
         },

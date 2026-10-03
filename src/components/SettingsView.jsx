@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useMoyu } from '../state.jsx'
 import { dateStr } from '../lib/time.js'
-import { perMinuteRate, dailySalary, formatMoney } from '../lib/money.js'
+import { perMinuteRate, dailySalary, workdaysOfMonth, formatMoney } from '../lib/money.js'
 import { isWorkDay } from '../lib/schedule.js'
 import { lookupHoliday, refreshYearHolidays } from '../lib/holiday.js'
 import { exportAll } from '../lib/storage.js'
@@ -289,15 +289,23 @@ export default function SettingsView({ onBack }) {
             />
           </label>
           <div className="stat-row">
-            <span className="stat-label">日薪</span>
+            <span className="stat-label">本月应出勤</span>
             <span className="stat-value">
-              <span className="stat-money">{formatMoney(dailySalary(settings))}</span>
+              <span className="stat-duration">
+                {workdaysOfMonth(today.slice(0, 7), settings, overrides)} 天
+              </span>
+            </span>
+          </div>
+          <div className="stat-row">
+            <span className="stat-label">日薪（按本月出勤天）</span>
+            <span className="stat-value">
+              <span className="stat-money">{formatMoney(dailySalary(settings, today.slice(0, 7), overrides))}</span>
             </span>
           </div>
           <div className="stat-row">
             <span className="stat-label">每分钟价值</span>
             <span className="stat-value">
-              <span className="stat-money">{formatMoney(perMinuteRate(settings), 3)}</span>
+              <span className="stat-money">{formatMoney(perMinuteRate(settings, today.slice(0, 7), overrides), 3)}</span>
             </span>
           </div>
         </div>

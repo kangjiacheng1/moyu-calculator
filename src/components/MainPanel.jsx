@@ -25,7 +25,7 @@ export default function MainPanel() {
   const settled = Boolean(day?.settled)
   const hasStarted = Boolean(day && day.segments.length > 0)
   const stats = computeDayStats(day, settings, now)
-  const rate = perMinuteRate(settings)
+  const rate = perMinuteRate(settings, ds.slice(0, 7), overrides)
 
   // 备注行内编辑：正在编辑的 segment index
   const [editingNote, setEditingNote] = useState(null)

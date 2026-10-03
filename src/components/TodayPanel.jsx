@@ -27,16 +27,17 @@ function Row({ label, duration, money, tone, detail }) {
 
 export default function TodayPanel() {
   const { state, now } = useMoyu()
-  const { settings, days } = state
+  const { settings, days, overrides } = state
   const [showGuide, setShowGuide] = useState(false)
   const ds = dateStr(new Date(now))
+  const month = ds.slice(0, 7)
   const day = days[ds]
   const stats = computeDayStats(day, settings, now)
-  const rate = perMinuteRate(settings)
-  const leach = totalLeachMoney(stats, settings)
+  const rate = perMinuteRate(settings, month, overrides)
+  const leach = totalLeachMoney(stats, settings, month, overrides)
   const rank = getRank(stats.workMin, stats.fishTotalMin)
 
-  const signed = (min) => `${min > 0 ? '-' : ''}${formatMoney(Math.abs(minutesToMoney(min, settings)))}`
+  const signed = (min) => `${min > 0 ? '-' : ''}${formatMoney(Math.abs(minutesToMoney(min, settings, month, overrides)))}`
 
   const inFishMode = settings.lateEarlyMode !== 'deduct'
 
@@ -57,12 +58,12 @@ export default function TodayPanel() {
         <Row
           label="🧱 搬砖"
           duration={formatDuration(stats.workMin)}
-          money={formatMoney(minutesToMoney(stats.workMin, settings))}
+          money={formatMoney(minutesToMoney(stats.workMin, settings, month, overrides))}
         />
         <Row
           label="🐟 摸鱼"
           duration={formatDuration(stats.fishTotalMin)}
-          money={`+${formatMoney(minutesToMoney(stats.fishTotalMin, settings))}`}
+          money={`+${formatMoney(minutesToMoney(stats.fishTotalMin, settings, month, overrides))}`}
           tone="good"
           detail={fishDetail}
         />
@@ -83,7 +84,7 @@ export default function TodayPanel() {
         <Row
           label="🌙 加班"
           duration={stats.overtimeMin > 0 ? formatDuration(stats.overtimeMin) : '0分钟'}
-          money={stats.overtimeMin > 0 ? `+${formatMoney(minutesToMoney(stats.overtimeMin, settings))}` : null}
+          money={stats.overtimeMin > 0 ? `+${formatMoney(minutesToMoney(stats.overtimeMin, settings, month, overrides))}` : null}
           tone="warm"
         />
       </div>
