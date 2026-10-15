@@ -55,7 +55,7 @@ function clampSegmentToWindows(start, end, windows) {
 
 // 计算单日统计。day: DayRecord，nowMs 用于截断进行中的 segment
 export function computeDayStats(day, settings, nowMs = Date.now()) {
-  const stats = { lateMin: 0, earlyMin: 0, overtimeMin: 0, workMin: 0, fishMin: 0, fishTotalMin: 0 }
+  const stats = { lateMin: 0, earlyMin: 0, workMin: 0, fishMin: 0, fishTotalMin: 0 }
   if (!day || !Array.isArray(day.segments) || day.segments.length === 0) {
     return stats
   }
@@ -86,13 +86,11 @@ export function computeDayStats(day, settings, nowMs = Date.now()) {
     }
   }
 
-  // 早退 / 加班：以记录的下班时间（offWorkAt）与 pmEnd 比较
+  // 早退：以记录的下班时间（offWorkAt）与 pmEnd 比较（无加班费，不统计加班）
   if (day.offWorkAt != null) {
     const pmEndMs = minutesOfDay(ds, settings.pmEnd)
     if (day.offWorkAt < pmEndMs) {
       stats.earlyMin = Math.floor((pmEndMs - day.offWorkAt) / 60000)
-    } else if (day.offWorkAt > pmEndMs) {
-      stats.overtimeMin = Math.floor((day.offWorkAt - pmEndMs) / 60000)
     }
   }
 

@@ -852,7 +852,6 @@ html[data-theme='dark'] .rank-badge .rank-name {
 
 /* ===== 日历覆盖 ===== */
 
-.calendar-head,
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -864,6 +863,8 @@ html[data-theme='dark'] .rank-badge .rank-name {
   font-size: 12px;
   color: var(--on-surface-variant);
   padding: 4px 0;
+  aspect-ratio: auto;
+  min-height: 0;
 }
 
 .calendar-cell {

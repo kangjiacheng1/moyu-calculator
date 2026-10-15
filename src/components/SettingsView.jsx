@@ -56,12 +56,11 @@ function CalendarOverride() {
 
   return (
     <div className="calendar">
-      <div className="calendar-head">
+      {/* 表头与日期共用一个 grid，从结构上保证列对齐 */}
+      <div className="calendar-grid">
         {WEEKDAYS.map((w) => (
           <div key={w} className="calendar-head-cell">{w}</div>
         ))}
-      </div>
-      <div className="calendar-grid">
         {cells.map((ds, i) => {
           if (ds == null) return <div key={`blank-${i}`} className="calendar-cell calendar-blank" />
           const override = overrides[ds]

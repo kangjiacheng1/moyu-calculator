@@ -203,11 +203,6 @@ export default function MainPanel() {
               {inFishMode ? ' · 已计入摸鱼' : ` · -${formatMoney(stats.earlyMin * rate)}`}
             </span>
           )}
-          {stats.overtimeMin > 0 && (
-            <span className="chip chip-warm">
-              加班 {stats.overtimeMin} 分钟 · +{formatMoney(stats.overtimeMin * rate)}
-            </span>
-          )}
         </div>
       </div>
 
@@ -222,12 +217,6 @@ export default function MainPanel() {
             <span>摸鱼</span>
             <span>{formatDuration(stats.fishTotalMin)}</span>
           </div>
-          {stats.overtimeMin > 0 && (
-            <div className="summary-row">
-              <span>加班</span>
-              <span>{formatDuration(stats.overtimeMin)}</span>
-            </div>
-          )}
         </div>
       ) : (
         <>

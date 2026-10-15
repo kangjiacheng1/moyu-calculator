@@ -81,12 +81,6 @@ export default function TodayPanel() {
           tone="bad"
           detail={inFishMode && stats.earlyMin > 0 ? '已计入摸鱼' : null}
         />
-        <Row
-          label="🌙 加班"
-          duration={stats.overtimeMin > 0 ? formatDuration(stats.overtimeMin) : '0分钟'}
-          money={stats.overtimeMin > 0 ? `+${formatMoney(minutesToMoney(stats.overtimeMin, settings, month, overrides))}` : null}
-          tone="warm"
-        />
       </div>
 
       <div className="card leach-card">

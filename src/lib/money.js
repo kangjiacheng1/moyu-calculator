@@ -38,11 +38,6 @@ export function totalLeachMoney(stats, settings, monthStr, overrides) {
   return minutesToMoney(stats.fishTotalMin, settings, monthStr, overrides)
 }
 
-// 加班价值 = 加班分钟 × 单价（单独展示）
-export function overtimeMoney(stats, settings, monthStr, overrides) {
-  return minutesToMoney(stats.overtimeMin, settings, monthStr, overrides)
-}
-
 export function formatMoney(amount, digits = 2) {
   return `¥${amount.toFixed(digits)}`
 }
