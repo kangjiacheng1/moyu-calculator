@@ -9,7 +9,7 @@ import {
   workWindows,
   splitSegmentsByLunch,
 } from '../lib/time.js'
-import { perMinuteRate, formatMoney } from '../lib/money.js'
+import { perMinuteRate, minutesToMoney, formatMoney } from '../lib/money.js'
 import { isWorkDay } from '../lib/schedule.js'
 import { lookupHoliday } from '../lib/holiday.js'
 import { chat } from '../lib/ai.js'
@@ -26,6 +26,8 @@ export default function MainPanel() {
   const hasStarted = Boolean(day && day.segments.length > 0)
   const stats = computeDayStats(day, settings, now)
   const rate = perMinuteRate(settings, ds.slice(0, 7), overrides)
+  // 今日白嫖金额（精确到秒，随心跳跳动）
+  const leachNow = minutesToMoney(stats.fishTotalMinPrecise, settings, ds.slice(0, 7), overrides)
 
   // 备注行内编辑：正在编辑的 segment index
   const [editingNote, setEditingNote] = useState(null)
@@ -186,6 +188,7 @@ export default function MainPanel() {
               <span className="dot-sep">·</span>
               <span>🐟 摸鱼 {formatDuration(stats.fishTotalMin)}</span>
             </div>
+            <div className="status-leach">💰 今日白嫖 +{formatMoney(leachNow)}</div>
             {fishDetail && <div className="status-accum status-accum-detail">{fishDetail}</div>}
           </>
         )}

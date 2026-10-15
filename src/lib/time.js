@@ -55,7 +55,7 @@ function clampSegmentToWindows(start, end, windows) {
 
 // 计算单日统计。day: DayRecord，nowMs 用于截断进行中的 segment
 export function computeDayStats(day, settings, nowMs = Date.now()) {
-  const stats = { lateMin: 0, earlyMin: 0, workMin: 0, fishMin: 0, fishTotalMin: 0 }
+  const stats = { lateMin: 0, earlyMin: 0, workMin: 0, fishMin: 0, fishTotalMin: 0, fishTotalMinPrecise: 0 }
   if (!day || !Array.isArray(day.segments) || day.segments.length === 0) {
     return stats
   }
@@ -63,6 +63,7 @@ export function computeDayStats(day, settings, nowMs = Date.now()) {
   const windows = workWindows(ds, settings)
 
   let firstStart = null
+  let fishRaw = 0 // 未取整的摸鱼分钟，供金额逐秒跳动
   for (const seg of day.segments) {
     const start = seg.start
     const end = seg.end == null ? Math.min(nowMs, minutesOfDay(ds, '24:00')) : seg.end
@@ -72,11 +73,11 @@ export function computeDayStats(day, settings, nowMs = Date.now()) {
     if (seg.kind === 'work') {
       stats.workMin += ms / 60000
     } else if (seg.kind === 'fish') {
-      stats.fishMin += ms / 60000
+      fishRaw += ms / 60000
     }
   }
   stats.workMin = Math.floor(stats.workMin)
-  stats.fishMin = Math.floor(stats.fishMin)
+  stats.fishMin = Math.floor(fishRaw)
 
   // 迟到：当天第一个 segment（无论 work/fish）的 start 晚于 amStart 即算迟到
   if (firstStart != null) {
@@ -99,6 +100,11 @@ export function computeDayStats(day, settings, nowMs = Date.now()) {
     settings.lateEarlyMode === 'deduct'
       ? stats.fishMin
       : stats.fishMin + stats.lateMin + stats.earlyMin
+  // 精确口径（不取整）：今日金额逐秒跳动用；迟到/早退是静态值，沿用取整分钟
+  stats.fishTotalMinPrecise =
+    settings.lateEarlyMode === 'deduct'
+      ? fishRaw
+      : fishRaw + stats.lateMin + stats.earlyMin
   return stats
 }
 

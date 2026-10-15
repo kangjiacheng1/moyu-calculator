@@ -4,7 +4,6 @@ import { dateStr, formatDuration, computeDayStats } from '../lib/time.js'
 import {
   perMinuteRate,
   minutesToMoney,
-  totalLeachMoney,
   formatMoney,
 } from '../lib/money.js'
 import { getRank } from '../lib/rank.js'
@@ -34,7 +33,8 @@ export default function TodayPanel() {
   const day = days[ds]
   const stats = computeDayStats(day, settings, now)
   const rate = perMinuteRate(settings, month, overrides)
-  const leach = totalLeachMoney(stats, settings, month, overrides)
+  // 总白嫖用精确分钟（不取整），配合 1s 心跳实现金额逐秒跳动
+  const leach = minutesToMoney(stats.fishTotalMinPrecise, settings, month, overrides)
   const rank = getRank(stats.workMin, stats.fishTotalMin)
 
   const signed = (min) => `${min > 0 ? '-' : ''}${formatMoney(Math.abs(minutesToMoney(min, settings, month, overrides)))}`
@@ -63,7 +63,7 @@ export default function TodayPanel() {
         <Row
           label="🐟 摸鱼"
           duration={formatDuration(stats.fishTotalMin)}
-          money={`+${formatMoney(minutesToMoney(stats.fishTotalMin, settings, month, overrides))}`}
+          money={`+${formatMoney(minutesToMoney(stats.fishTotalMinPrecise, settings, month, overrides))}`}
           tone="good"
           detail={fishDetail}
         />
